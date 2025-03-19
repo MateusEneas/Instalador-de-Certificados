@@ -2,7 +2,11 @@ package com.secran.certificados.service;
 
 import com.secran.certificados.model.Certificado;
 import com.secran.certificados.repository.CertificadoRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,4 +30,9 @@ public class CertificadoService {
     public Certificado salvar(Certificado certificado) {
         return certificadoRepository.save(certificado);
     }
+
+    public void deletar(UUID id) {
+        certificadoRepository.deleteById(id);
+    }
+
 }

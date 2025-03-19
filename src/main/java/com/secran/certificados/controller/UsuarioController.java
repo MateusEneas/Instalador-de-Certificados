@@ -1,5 +1,6 @@
 package com.secran.certificados.controller;
 
+import com.secran.certificados.dto.UsuarioDTO;
 import com.secran.certificados.model.Usuario;
 import com.secran.certificados.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> adicionar(@RequestBody Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.salvar(usuario));
+    public ResponseEntity<Usuario> adicionar(@RequestBody UsuarioDTO usuarioDTO) {
+        Usuario usuarioSalvo = usuarioService.salvar(usuarioDTO);
+        return ResponseEntity.ok(usuarioSalvo);
     }
+
 }
