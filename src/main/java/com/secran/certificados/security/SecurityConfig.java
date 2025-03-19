@@ -31,7 +31,7 @@ import java.util.function.Function;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private static final String SECRET_KEY = "your-secret-key-here";
+    private static final String SECRET_KEY = "Lfgpa5M/zXublGLfYR09gFJGz2qXXVGluqO4+yEOoz0=";
 
     public SecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
@@ -41,12 +41,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/login", "/api/auth/register"))
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -87,8 +88,12 @@ public class SecurityConfig {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Erro ao decodificar a chave secreta", e);
+        }
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -109,4 +114,3 @@ public class SecurityConfig {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 }
-
