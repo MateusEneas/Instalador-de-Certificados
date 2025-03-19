@@ -22,6 +22,10 @@ public class UsuarioService {
     }
 
     public Usuario salvar(UsuarioDTO usuarioDTO) {
+        if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email já cadastrado");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNome(usuarioDTO.getNome());
         usuario.setEmail(usuarioDTO.getEmail());
@@ -29,4 +33,16 @@ public class UsuarioService {
         usuario.setTipoUsuario(usuarioDTO.getTipoUsuario());
         return usuarioRepository.save(usuario);
     }
+
+    public Usuario autenticar(String email, String senha) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (!passwordEncoder.matches(senha, usuario.getSenha())) { // Compara a senha
+            throw new RuntimeException("Senha incorreta");
+        }
+
+        return usuario;
+    }
+
 }

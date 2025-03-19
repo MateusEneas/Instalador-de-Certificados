@@ -6,17 +6,12 @@ import com.secran.certificados.dto.UsuarioDTO;
 import com.secran.certificados.model.Usuario;
 import com.secran.certificados.security.JwtUtil;
 import com.secran.certificados.service.UsuarioService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UsuarioService usuarioService;
@@ -30,12 +25,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getSenha())
-        );
+        // Autentica o usuário
+        Usuario usuario = usuarioService.autenticar(loginRequest.getEmail(), loginRequest.getSenha());
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
+        // Gera o token JWT
+        String token = jwtUtil.generateToken(usuario);
 
         return ResponseEntity.ok(new AuthResponse(token));
     }
