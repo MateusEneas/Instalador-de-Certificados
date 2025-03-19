@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CertificadoService {
@@ -23,7 +24,7 @@ public class CertificadoService {
     }
 
     // Buscar um certificado por ID
-    public Certificado buscarPorId(Long id) {
+    public Certificado buscarPorId(UUID id) {
         return certificadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Certificado não encontrado"));
     }
@@ -42,7 +43,7 @@ public class CertificadoService {
     }
 
     // Atualizar um certificado existente
-    public Certificado atualizar(Long id, CertificadoDTO certificadoDTO) {
+    public Certificado atualizar(UUID id, CertificadoDTO certificadoDTO) {
         Certificado certificadoExistente = buscarPorId(id);
         validarDataValidade(certificadoDTO.getDataValidade());
 
@@ -55,7 +56,7 @@ public class CertificadoService {
     }
 
     // Excluir um certificado
-    public void excluir(Long id) {
+    public void excluir(UUID id) {
         Certificado certificado = buscarPorId(id);
         certificadoRepository.delete(certificado);
     }

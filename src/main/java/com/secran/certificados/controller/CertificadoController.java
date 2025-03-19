@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/certificados")
@@ -34,7 +35,7 @@ public class CertificadoController {
     // Buscar um certificado por ID (acessível por USER e ADMIN)
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public Certificado buscarCertificadoPorId(@PathVariable Long id) {
+    public Certificado buscarCertificadoPorId(@PathVariable UUID id) {
         return certificadoService.buscarPorId(id);
     }
 
@@ -48,27 +49,37 @@ public class CertificadoController {
     // Atualizar um certificado existente (acessível apenas por ADMIN)
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public Certificado atualizarCertificado(@PathVariable Long id, @RequestBody CertificadoDTO certificadoDTO) {
+    public Certificado atualizarCertificado(@PathVariable UUID id, @RequestBody CertificadoDTO certificadoDTO) {
         return certificadoService.atualizar(id, certificadoDTO);
     }
 
     // Excluir um certificado (acessível apenas por ADMIN)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void excluirCertificado(@PathVariable Long id) {
+    public void excluirCertificado(@PathVariable UUID id) {
         certificadoService.excluir(id);
     }
 
     // Instalar um certificado (acessível por USER e ADMIN)
     @GetMapping("/instalar/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Resource> instalarCertificado(@PathVariable Long id) {
+    public ResponseEntity<Resource> instalarCertificado(@PathVariable UUID id) {
         Certificado certificado = certificadoService.buscarPorId(id);
         Path path = Paths.get(certificado.getCaminhoArquivo());
-        Resource resource = new UrlResource(path.toUri());
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        try {
+            Resource resource = new UrlResource(path.toUri());
+
+            // Verifica se o arquivo existe e é legível
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Arquivo não encontrado ou não pode ser lido: " + certificado.getCaminhoArquivo());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao carregar o arquivo: " + e.getMessage(), e);
+        }
     }
 }

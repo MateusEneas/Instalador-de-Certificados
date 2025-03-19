@@ -11,21 +11,21 @@ public class Certificado {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String nomeEmpresa;
+    private String nome; // Alterado de nomeEmpresa para nome
     private String caminhoArquivo;
-    private String senhaCriptografada;
-    private LocalDate dataExpiracao;
+    private String senha; // Alterado de senhaCriptografada para senha
+    private LocalDate dataValidade; // Alterado de dataExpiracao para dataValidade
     private boolean disponivel;
 
     public Certificado() {
     }
 
-    public Certificado(UUID id, String nomeEmpresa, String caminhoArquivo, String senhaCriptografada, LocalDate dataExpiracao, boolean disponivel) {
+    public Certificado(UUID id, String nome, String caminhoArquivo, String senha, LocalDate dataValidade, boolean disponivel) {
         this.id = id;
-        this.nomeEmpresa = nomeEmpresa;
+        this.nome = nome;
         this.caminhoArquivo = caminhoArquivo;
-        this.senhaCriptografada = senhaCriptografada;
-        this.dataExpiracao = dataExpiracao;
+        this.senha = senha;
+        this.dataValidade = dataValidade;
         this.disponivel = disponivel;
     }
 
@@ -37,12 +37,12 @@ public class Certificado {
         this.id = id;
     }
 
-    public String getNomeEmpresa() {
-        return nomeEmpresa;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeEmpresa(String nomeEmpresa) {
-        this.nomeEmpresa = nomeEmpresa;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getCaminhoArquivo() {
@@ -53,20 +53,20 @@ public class Certificado {
         this.caminhoArquivo = caminhoArquivo;
     }
 
-    public String getSenhaCriptografada() {
-        return senhaCriptografada;
+    public String getSenha() {
+        return senha;
     }
 
-    public void setSenhaCriptografada(String senhaCriptografada) {
-        this.senhaCriptografada = senhaCriptografada;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
-    public LocalDate getDataExpiracao() {
-        return dataExpiracao;
+    public LocalDate getDataValidade() {
+        return dataValidade;
     }
 
-    public void setDataExpiracao(LocalDate dataExpiracao) {
-        this.dataExpiracao = dataExpiracao;
+    public void setDataValidade(LocalDate dataValidade) {
+        this.dataValidade = dataValidade;
     }
 
     public boolean isDisponivel() {
@@ -75,5 +75,17 @@ public class Certificado {
 
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
+    }
+
+    @Override
+    public String toString() {
+        return "Certificado{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", caminhoArquivo='" + caminhoArquivo + '\'' +
+                ", senha='" + senha + '\'' +
+                ", dataValidade=" + dataValidade +
+                ", disponivel=" + disponivel +
+                '}';
     }
 }
