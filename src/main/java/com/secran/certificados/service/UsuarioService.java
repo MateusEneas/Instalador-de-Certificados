@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Service
 public class UsuarioService {
+
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,5 +45,4 @@ public class UsuarioService {
 
         return usuario;
     }
-
 }
